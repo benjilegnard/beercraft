@@ -1,0 +1,16 @@
+{
+  "//": "Flat copy of tsconfig.json + tsconfig.app.json: tsarch does not resolve extends",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "paths": {
+      "@app/*": ["./src/app/*"]
+    }
+  },
+  "include": ["src/app/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}

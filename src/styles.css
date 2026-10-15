@@ -1,1 +1,121 @@
-/* You can add global styles to this file, and also import other style files */
+/* Black on white, 2px borders, white on black actions */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #000;
+  background: #fff;
+}
+
+a {
+  color: #000;
+}
+
+:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 2px solid #000;
+}
+
+header nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+main {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  background: #000;
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+button:disabled {
+  color: #000;
+  background: #fff;
+  cursor: not-allowed;
+}
+
+button[aria-pressed='false'] {
+  color: #000;
+  background: #fff;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  font: inherit;
+  border: 2px solid #000;
+}
+
+.card {
+  padding: 1rem;
+  border: 2px solid #000;
+}
+
+.card h2,
+.card h3 {
+  margin-top: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+  max-width: 24rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

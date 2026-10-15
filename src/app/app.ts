@@ -1,12 +1,24 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+
+import { BasketIndicator } from '@app/basket/feature';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  imports: [BasketIndicator, RouterLink, RouterOutlet],
+  template: `
+    <header>
+      <a routerLink="/" class="brand">Beercraft</a>
+      <nav aria-label="Main">
+        <a routerLink="/">Catalog</a>
+        <a routerLink="/orders">Orders</a>
+        <a routerLink="/account">Account</a>
+        <app-basket-indicator />
+      </nav>
+    </header>
+    <main>
+      <router-outlet />
+    </main>
+  `,
 })
-export class App {
-  protected readonly title = signal('beercraft');
-}
+export class App {}

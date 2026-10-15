@@ -1,3 +1,5 @@
+import { sql } from 'drizzle-orm';
+
 import { hashPassword } from '../auth/password';
 import { db } from './client';
 import { categories, orderItems, orders, products, users, type NewProduct } from './schema';
@@ -11,6 +13,8 @@ async function seed() {
     tx.delete(products).run();
     tx.delete(categories).run();
     tx.delete(users).run();
+    // restart AUTOINCREMENT ids at 1 (the demo user is id 1)
+    tx.run(sql`DELETE FROM sqlite_sequence`);
 
     const [ipa, stout, lager, sour] = tx
       .insert(categories)
