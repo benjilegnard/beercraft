@@ -1,6 +1,7 @@
 {
   "name": "beercraft",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,8 +10,6 @@
     "test": "ng test",
     "serve:ssr:beercraft": "node dist/beercraft/server/server.mjs"
   },
-  "private": true,
-  "packageManager": "npm@12.0.2",
   "dependencies": {
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
@@ -29,10 +28,11 @@
     "@angular/cli": "^22.0.6",
     "@angular/compiler-cli": "^22.0.0",
     "@types/express": "^5.0.1",
-    "@types/node": "^20.17.19",
+    "@types/node": "^26.6.5",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "vitest": "^4.0.8"
-  }
+  },
+  "packageManager": "pnpm@12.10.1"
 }
