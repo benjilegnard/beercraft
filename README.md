@@ -2,6 +2,44 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.6.
 
+Angular SSR app with a [Hono](https://hono.dev/) server and a REST API backed by SQLite through [Drizzle ORM](https://orm.drizzle.team/). See the [API reference](docs/reference/api.md).
+
+## Installation
+
+Requirements: Node.js 22+ and [pnpm](https://pnpm.io/).
+
+```bash
+pnpm install       # also builds the better-sqlite3 native module
+pnpm db:migrate    # create the SQLite database and apply migrations
+pnpm db:seed       # insert sample data
+pnpm start         # start the dev server on http://localhost:4200
+```
+
+The seed creates a demo user: `demo@beercraft.dev` / `beercraft123`.
+
+### Database
+
+The database is a SQLite file, `data/beercraft.db` by default. Set `DATABASE_URL` to use another path:
+
+```bash
+DATABASE_URL=data/test.db pnpm db:migrate
+```
+
+| Command            | Description                                                                 |
+| ------------------ | --------------------------------------------------------------------------- |
+| `pnpm db:migrate`  | Apply pending migrations from `drizzle/`                                    |
+| `pnpm db:generate` | Generate a new migration after changing `src/server/db/schema.ts`           |
+| `pnpm db:seed`     | Delete all data and insert sample categories, products, a user and an order |
+| `pnpm db:studio`   | Open Drizzle Studio to browse the database                                  |
+
+To reset the database from scratch:
+
+```bash
+rm -rf data && pnpm db:migrate && pnpm db:seed
+```
+
+If `better-sqlite3` fails to load (for example after a Node.js upgrade), rebuild it with `pnpm rebuild better-sqlite3`.
+
 ## Development server
 
 To start a local development server, run:

@@ -1,4 +1,3 @@
-
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
 ## TypeScript Best Practices
@@ -55,3 +54,42 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Use the `providedIn: 'root'` option for singleton services
 - Prefer the `@Service` decorator over `@Injectable({providedIn: 'root'})` for new singleton services (Angular v22+)
 - Use the `inject()` function instead of constructor injection
+
+## Server (Hono)
+
+- Entry point: `src/server.ts`. Hono app that mounts the API, serves static files and renders Angular SSR. Used by `ng serve` (dev) and `ng build` (`ssr.entry` in `angular.json`).
+- API router: `src/server/index.ts` mounts `src/server/api/*` under `/api`. Order matters: `app.route('/api', api)` must stay before the static and SSR handlers.
+- API docs: `docs/reference/api.md`. Keep it in sync when adding or changing routes.
+- Code layout:
+  - `src/server/api/<resource>-api.ts`: one Hono sub-app per resource, default export, chained routes (`new Hono().get(...).post(...)`) to keep RPC types.
+  - `src/server/api/validation.ts`: `validate(target, zodSchema)` wraps `@hono/zod-validator` and returns `{ error, issues }` with 400. `idParam` validates `:id`.
+  - `src/server/auth/password.ts`: scrypt `hashPassword` / `verifyPassword`.
+- Conventions:
+  - Validate every input (`json`, `query`, `param`) with zod v4 through `validate()`, read it with `c.req.valid(...)`.
+  - Errors: `c.json({ error: '...' }, status)`. Never return `passwordHash`.
+  - `app.onError` in `src/server.ts` returns `HTTPException` responses as is, anything else becomes a 500.
+  - No auth yet: orders take `userId` in the body.
+
+## Database (Drizzle ORM + SQLite)
+
+- Driver: `better-sqlite3` (native module).
+  - Listed in `allowBuilds` in `pnpm-workspace.yaml`.
+  - Listed in `externalDependencies` in `angular.json`: must not be bundled by esbuild.
+- Files:
+  - `src/server/db/schema.ts`: tables, `relations()` and inferred types (`Product`, `NewProduct`, ...).
+  - `src/server/db/client.ts`: exports `db` (with schema, so `db.query.*` relational API works). Enables WAL and `foreign_keys`.
+  - `src/server/db/seed.ts`: wipes and reseeds sample data (run with `tsx`).
+  - `drizzle.config.ts`: drizzle-kit config, migrations output in `drizzle/` (committed).
+- DB file: `DATABASE_URL` env var, default `data/beercraft.db` (git ignored).
+- Commands:
+  - `pnpm db:generate`: generate a SQL migration after editing `schema.ts`
+  - `pnpm db:migrate`: apply migrations
+  - `pnpm db:seed`: reset sample data
+  - `pnpm db:studio`: open Drizzle Studio
+- Schema conventions:
+  - snake_case column names in SQL, camelCase in TS (`priceCents: integer('price_cents')`).
+  - Money as integer cents (`*Cents`), never floats.
+  - Timestamps: `integer({ mode: 'timestamp' })` with `default(sql\`(unixepoch())\`)`(use the`createdAt()` helper).
+  - Add an index on every foreign key column.
+  - Never edit an applied migration: change `schema.ts` and run `pnpm db:generate`.
+- Transactions: better-sqlite3 transactions are **synchronous**. Inside `db.transaction((tx) => ...)` use `.get()`, `.all()`, `.run()`, no `async`/`await`. To abort, throw (see `OrderError` in `src/server/api/orders-api.ts`) and map the error to a response outside the transaction.

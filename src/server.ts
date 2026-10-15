@@ -4,11 +4,14 @@ import { isMainModule } from '@angular/ssr/node';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { requestId } from 'hono/request-id';
 import { secureHeaders } from 'hono/secure-headers';
 import { existsSync } from 'node:fs';
 
 import { join } from 'node:path';
+
+import { api } from './server/index';
 
 /**
  * Initialize Hono and export the app instance
@@ -24,13 +27,15 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 /**
  * Endpoints can be defined here
  */
-app.get('/api/v1/health', async (c) => {
+app.get('/api/health', async (c) => {
   return c.json({
     status: 'ok',
     message: 'Server is running',
     timestamp: new Date().toISOString(),
   });
 });
+
+app.route('/api', api);
 
 if (existsSync(browserDistFolder)) {
   /**
@@ -69,6 +74,9 @@ app.notFound((c) => {
  * Error handling
  */
 app.onError((error, c) => {
+  if (error instanceof HTTPException) {
+    return error.getResponse();
+  }
   console.error(`${error}`);
   return c.text('Internal Server Error', 500);
 });
